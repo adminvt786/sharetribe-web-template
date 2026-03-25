@@ -47,6 +47,7 @@ module.exports = (req, res) => {
 
   const { idpToken, idpId, ...rest } = req.body || {};
 
+  console.log('Creating user with idp', { idpId, idpToken });
   // Choose the idpClientId based on which authentication method is used.
   const idpClientId =
     idpId === FACEBOOK_IDP_ID
@@ -57,6 +58,7 @@ module.exports = (req, res) => {
       ? LINKEDIN_PROXY_CLIENT_ID
       : null;
 
+  console.log('Using idpClientId', { idpClientId, rest });
   sdk.currentUser
     .createWithIdp({ idpId, idpClientId, idpToken, ...rest })
     .then(() =>

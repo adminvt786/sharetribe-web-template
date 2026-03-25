@@ -53,6 +53,8 @@ const verifyCallback = (req, accessToken, refreshToken, profile, done) => {
     emailVerified: true,
   };
 
+  console.log('LinkedIn verifyCallback called with profile', JSON.stringify(user));
+
   const state = req.query.state;
   const queryParams = JSON.parse(state);
 
@@ -77,6 +79,11 @@ const verifyCallback = (req, accessToken, refreshToken, profile, done) => {
         defaultConfirm,
         profilePic: profile?.picture,
       };
+
+      console.log(
+        'LinkedIn verifyCallback created idpToken, logging in with idp',
+        JSON.stringify(userData)
+      );
       done(null, userData);
     })
     .catch(e => console.error(e));
@@ -95,7 +102,7 @@ exports.authenticateLinkedin = (req, res, next) => {
     ...(defaultConfirm ? { defaultConfirm } : {}),
     ...(userType ? { userType } : {}),
   };
-  
+
   const paramsAsString = JSON.stringify(params);
 
   passport.authenticate('linkedin', {
@@ -106,6 +113,8 @@ exports.authenticateLinkedin = (req, res, next) => {
 // Use custom callback for calling loginWithIdp enpoint
 // to log in the user to Flex with the data from Linkedin
 exports.authenticateLinkedinCallback = (req, res, next) => {
+  console.log('LinkedIn authenticateLinkedinCallback called with query', idpClientId, idpId);
+
   passport.authenticate('linkedin', function(err, user) {
     loginWithIdp(err, user, req, res, idpClientId, idpId);
   })(req, res, next);

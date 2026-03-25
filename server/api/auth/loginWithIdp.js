@@ -21,7 +21,9 @@ const httpsAgent = new https.Agent({ keepAlive: true });
 const baseUrl = BASE_URL ? { baseUrl: BASE_URL } : {};
 
 module.exports = (err, user, req, res, idpClientId, idpId) => {
+  console.log('Login with idp callback', { err, user, idpClientId, idpId });
   if (err) {
+    console.error('fetching-user-data-from-idp-failed', err);
     log.error(err, 'fetching-user-data-from-idp-failed');
 
     // Save error details to cookie so that we can show
@@ -42,6 +44,7 @@ module.exports = (err, user, req, res, idpClientId, idpId) => {
   }
 
   if (!user) {
+    console.error('Failed to fetch user details from identity provider');
     log.error(
       new Error('Failed to fetch user details from identity provider'),
       'fetching-user-data-from-idp-failed'
@@ -66,6 +69,8 @@ module.exports = (err, user, req, res, idpClientId, idpId) => {
 
   const { from, defaultReturn, defaultConfirm, userType } = user;
 
+  console.log('Login with idp callback, user data from idp', { user, from, defaultReturn, defaultConfirm, userType });
+  
   const tokenStore = sharetribeSdk.tokenStore.expressCookieStore({
     clientId: CLIENT_ID,
     req,
